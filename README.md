@@ -12,7 +12,16 @@ and fair collaboration.
 ---
 
 ## 2. Architecture Diagram
-![Architecture](architecture/diagram.png)
+User Browser
+     ↓
+React + Vite Frontend
+     ↓
+WebRTC 
+     ↓
+Node.js Backend
+     ↓
+PostgreSQL Database
+
 
 ---
 
@@ -36,4 +45,9 @@ git clone <your-repo-link>
 cd ForumX
 npm install
 npm run dev
-Open: http://localhost:5173
+```
+### Open
+
+
+
+

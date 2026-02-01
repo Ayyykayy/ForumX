@@ -72,7 +72,7 @@ All source code is available in the /src folder.
 Screenshots and demo details are available in /docs/final-output.md.
 ## 9. Build Reproducibility Instructions (Mandatory)
 To reproduce this project locally,
-follow /reproducibility/build.md.
+follow build.md.
 
 
 

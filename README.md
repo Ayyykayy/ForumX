@@ -46,7 +46,33 @@ cd ForumX
 npm install
 npm run dev
 ```
-### Open
+### Open link
+## 5. AI Tools Used
+- ChatGPT (design, coding, documentation)
+- Claude (design assistance)
+- GitHub Copilot (code suggestions)
+## 6. Prompt Strategy Summary
+We followed the PRIME framework:
+- Purpose
+- Role
+- Input
+- Method
+- Expected Output
+
+AI was used for:
+- UI design
+- Architecture
+- Code generation
+- Debugging
+- Documentation
+
+## 7. Source Code
+All source code is available in the /src folder.
+## 8. Final Output
+Screenshots and demo details are available in /docs/final-output.md.
+## 9. Build Reproducibility Instructions (Mandatory)
+To reproduce this project locally,
+follow /reproducibility/build.md.
 
 
 

@@ -4,38 +4,182 @@ import './Supervisor.css';
 
 const Supervisor = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeNav, setActiveNav] = useState('observability');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { id: 1, type: 'primary', team: 'Team Gamma', message: 'Consensus reached on "Q3 Goals"' },
+    { id: 2, type: 'warning', team: 'Team Delta', message: 'Moderator assistance requested' }
+  ]);
+
+  const [teams] = useState([
+    {
+      id: 1,
+      name: 'Design Ops - Alpha',
+      subtitle: 'Q3 Branding Discussion',
+      participants: { current: 12, total: 12 },
+      status: 'active',
+      statusText: 'Active Discussion',
+      elapsed: '22m',
+      type: 'ring',
+      overlayTitle: 'Ongoing Design Review',
+      users: ['Alex Rivera', 'Sam Chen', 'Jordan Lee']
+    },
+    {
+      id: 2,
+      name: 'Engineering - Beta',
+      subtitle: 'Sprint Backlog Review',
+      participants: { current: 5, total: 8 },
+      status: 'stable',
+      statusText: 'Stable Flow',
+      elapsed: '15m',
+      type: 'progress',
+      overlayTitle: 'Engineering Sync',
+      users: ['Taylor Swift', 'Morgan Freeman', 'Casey Jones']
+    },
+    {
+      id: 3,
+      name: 'Team Delta',
+      subtitle: 'Incident Retrospective',
+      participants: { current: 10, total: 10 },
+      status: 'critical',
+      statusText: 'Critical Support',
+      elapsed: '08m',
+      type: 'critical',
+      overlayTitle: 'Support Required',
+      critical: true,
+      users: ['Pat Smith', 'Chris Johnson', 'Alex Rivera']
+    },
+    {
+      id: 4,
+      name: 'Marketing - Gamma',
+      subtitle: 'Brand Strategy',
+      participants: { current: 4, total: 6 },
+      status: 'waiting',
+      statusText: 'Waiting for consensus',
+      type: 'waiting',
+      users: ['Jamie Williams', 'Robin Davis']
+    },
+    {
+      id: 5,
+      name: 'UX Research',
+      subtitle: 'Usability Interviews',
+      participants: { current: 2, total: 2 },
+      status: 'in-session',
+      statusText: 'In Session',
+      type: 'in-session',
+      users: ['Drew Brown', 'Sage Martinez']
+    }
+  ]);
+
+  // Filter teams based on search query
+  const filteredTeams = teams.filter(team => {
+    const query = searchQuery.toLowerCase();
+    return (
+      team.name.toLowerCase().includes(query) ||
+      team.subtitle.toLowerCase().includes(query) ||
+      team.users.some(user => user.toLowerCase().includes(query))
+    );
+  });
+
+  const handleNavClick = (navItem) => {
+    setActiveNav(navItem);
+    setSidebarOpen(false);
+    console.log(`Navigated to: ${navItem}`);
+  };
+
+  const handlePeekIntoTable = (tableName) => {
+    alert(`Peeking into ${tableName}...`);
+    console.log(`Peek action for: ${tableName}`);
+  };
+
+  const handleJoinAsModerator = (tableName) => {
+    if (confirm(`Join ${tableName} as moderator?`)) {
+      alert(`Joining ${tableName} as moderator...`);
+      console.log(`Moderator joined: ${tableName}`);
+    }
+  };
+
+  const handleSettings = () => {
+    alert('Opening system settings...');
+    console.log('Settings opened');
+  };
+
+  const handleLogout = () => {
+    if (confirm('Are you sure you want to exit?')) {
+      alert('Logging out...');
+      console.log('User logged out');
+    }
+  };
+
+  const handleFilter = () => {
+    alert('Opening filters...');
+    console.log('Filters opened');
+  };
+
+  const handleViewAll = () => {
+    alert('Viewing all discussion tables...');
+    console.log('View all clicked');
+  };
+
+  const handleStartNewSession = () => {
+    alert('Starting new session...');
+    console.log('New session started');
+  };
+
+  const dismissNotification = (id) => {
+    setNotifications(notifications.filter(n => n.id !== id));
+  };
 
   return (
     <div className="supervisor-container">
       <div className="layout-grid">
+        {/* Mobile Menu Toggle */}
+        <button 
+          className="mobile-menu-toggle"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          aria-label="Toggle menu"
+        >
+          <span className="material-symbols-outlined">
+            {sidebarOpen ? 'close' : 'menu'}
+          </span>
+        </button>
+
         {/* SideNavBar */}
-        <aside className="sidebar">
+        <aside className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
           <div className="sidebar-content">
             <div className="sidebar-top">
               <div className="brand-section">
                 <div className="brand-icon">
-                  <span className="material-symbols-outlined filled">grid_view</span>
-                </div>
-                <div className="brand-text">
-                  <h1 className="brand-title">ForumX</h1>
-                  <p className="brand-subtitle">Supervisor Hub</p>
+                  <img src="logo.png" alt="ForumX Logo" style={{width: '100%', height: '100%', objectFit: 'contain'}} />
                 </div>
               </div>
 
               <nav className="nav-menu">
-                <div className="nav-item active">
+                <div 
+                  className={`nav-item ${activeNav === 'observability' ? 'active' : ''}`}
+                  onClick={() => handleNavClick('observability')}
+                >
                   <span className="material-symbols-outlined">dashboard</span>
                   <p className="nav-label">Observability</p>
                 </div>
-                <div className="nav-item">
+                <div 
+                  className={`nav-item ${activeNav === 'team' ? 'active' : ''}`}
+                  onClick={() => handleNavClick('team')}
+                >
                   <span className="material-symbols-outlined">groups</span>
                   <p className="nav-label">Team Directory</p>
                 </div>
-                <div className="nav-item">
+                <div 
+                  className={`nav-item ${activeNav === 'analytics' ? 'active' : ''}`}
+                  onClick={() => handleNavClick('analytics')}
+                >
                   <span className="material-symbols-outlined">analytics</span>
                   <p className="nav-label">Historical Data</p>
                 </div>
-                <div className="nav-item">
+                <div 
+                  className={`nav-item ${activeNav === 'alerts' ? 'active' : ''}`}
+                  onClick={() => handleNavClick('alerts')}
+                >
                   <span className="material-symbols-outlined">notifications</span>
                   <p className="nav-label">Alert Logs</p>
                   <span className="nav-badge">12</span>
@@ -45,30 +189,45 @@ const Supervisor = () => {
               <div className="notifications-section">
                 <p className="section-title">Priority Notifications</p>
                 <div className="notifications-list">
-                  <div className="notification-card primary">
-                    <p className="notification-title">Team Gamma</p>
-                    <p className="notification-text">Consensus reached on &quot;Q3 Goals&quot;</p>
-                  </div>
-                  <div className="notification-card warning">
-                    <p className="notification-title">Team Delta</p>
-                    <p className="notification-text">Moderator assistance requested</p>
-                  </div>
+                  {notifications.map(notif => (
+                    <div key={notif.id} className={`notification-card ${notif.type}`}>
+                      <div className="notification-header">
+                        <p className="notification-title">{notif.team}</p>
+                        <button 
+                          className="dismiss-btn"
+                          onClick={() => dismissNotification(notif.id)}
+                          aria-label="Dismiss notification"
+                        >
+                          <span className="material-symbols-outlined">close</span>
+                        </button>
+                      </div>
+                      <p className="notification-text">{notif.message}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
 
             <div className="sidebar-bottom">
-              <div className="bottom-item">
+              <div className="bottom-item" onClick={handleSettings}>
                 <span className="material-symbols-outlined">settings</span>
                 <p className="bottom-label">System Settings</p>
               </div>
-              <div className="bottom-item danger">
+              <div className="bottom-item danger" onClick={handleLogout}>
                 <span className="material-symbols-outlined">logout</span>
                 <p className="bottom-label">Exit Session</p>
               </div>
             </div>
           </div>
         </aside>
+
+        {/* Sidebar Overlay for Mobile */}
+        {sidebarOpen && (
+          <div 
+            className="sidebar-overlay"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
         {/* Main Content Area */}
         <main className="main-content">
@@ -94,7 +253,7 @@ const Supervisor = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <button className="filter-button">
+              <button className="filter-button" onClick={handleFilter}>
                 <span className="material-symbols-outlined">tune</span>
               </button>
               <div className="profile-section">
@@ -148,7 +307,7 @@ const Supervisor = () => {
             {/* Active Tables Section */}
             <div className="section-header">
               <h3 className="section-title-large">Active Discussion Tables</h3>
-              <button className="view-all-button">
+              <button className="view-all-button" onClick={handleViewAll}>
                 <span>View All</span>
                 <span className="material-symbols-outlined">arrow_forward</span>
               </button>
@@ -156,201 +315,128 @@ const Supervisor = () => {
 
             {/* Team Cards Grid */}
             <div className="team-grid">
-              {/* Team Table Card 1 */}
-              <div className="team-card">
-                <div className="card-header">
-                  <div>
-                    <h4 className="card-title">Design Ops - Alpha</h4>
-                    <p className="card-subtitle">Q3 Branding Discussion</p>
-                  </div>
-                  <div className="participant-count">
-                    <span className="material-symbols-outlined">person</span>
-                    <span className="count-text">12/12</span>
-                  </div>
+              {filteredTeams.length === 0 ? (
+                <div className="no-results">
+                  <span className="material-symbols-outlined">search_off</span>
+                  <p>No teams or users found matching "{searchQuery}"</p>
                 </div>
-
-                <div className="table-visual">
-                  <div className="table-ring">
-                    <div className="table-core">
-                      <span className="core-text">CORE</span>
+              ) : (
+                filteredTeams.map(team => (
+                  <div key={team.id} className={`team-card ${team.critical ? 'critical' : ''}`}>
+                    <div className="card-header">
+                      <div>
+                        {team.critical ? (
+                          <div className="title-with-warning">
+                            <h4 className="card-title danger">{team.name}</h4>
+                            <span className="material-symbols-outlined warning-icon">warning</span>
+                          </div>
+                        ) : (
+                          <h4 className="card-title">{team.name}</h4>
+                        )}
+                        <p className="card-subtitle">{team.subtitle}</p>
+                      </div>
+                      <div className={`participant-count ${team.critical ? 'danger' : ''}`}>
+                        <span className="material-symbols-outlined">person</span>
+                        <span className="count-text">{team.participants.current}/{team.participants.total}</span>
+                      </div>
                     </div>
-                    <div className="active-segment"></div>
-                    <div className="marker marker-active marker-bottom"></div>
-                    <div className="marker marker-right"></div>
-                    <div className="marker marker-top"></div>
-                  </div>
-                </div>
 
-                <div className="card-footer">
-                  <span className="status-text active">
-                    <span className="status-indicator"></span> Active Discussion
-                  </span>
-                  <span className="elapsed-time">Elapsed: 22m</span>
-                </div>
+                    {/* Visual based on type */}
+                    {team.type === 'ring' && (
+                      <div className="table-visual">
+                        <div className="table-ring">
+                          <div className="table-core">
+                            <span className="core-text">CORE</span>
+                          </div>
+                          <div className="active-segment"></div>
+                          <div className="marker marker-active marker-bottom"></div>
+                          <div className="marker marker-right"></div>
+                          <div className="marker marker-top"></div>
+                        </div>
+                      </div>
+                    )}
 
-                <div className="card-overlay">
-                  <p className="overlay-title">Ongoing Design Review</p>
-                  <button className="overlay-button">
-                    <span className="material-symbols-outlined">visibility</span> Peek Into Table
-                  </button>
-                </div>
-              </div>
+                    {team.type === 'progress' && (
+                      <div className="table-visual">
+                        <div className="table-ring">
+                          <div className="table-core">
+                            <span className="core-text">CORE</span>
+                          </div>
+                          <div className="progress-segment"></div>
+                          <div className="marker marker-progress marker-bottom"></div>
+                          <div className="marker marker-inactive marker-left"></div>
+                        </div>
+                      </div>
+                    )}
 
-              {/* Team Table Card 2 */}
-              <div className="team-card">
-                <div className="card-header">
-                  <div>
-                    <h4 className="card-title">Engineering - Beta</h4>
-                    <p className="card-subtitle">Sprint Backlog Review</p>
-                  </div>
-                  <div className="participant-count">
-                    <span className="material-symbols-outlined">person</span>
-                    <span className="count-text">5/8</span>
-                  </div>
-                </div>
+                    {team.type === 'critical' && (
+                      <div className="table-visual">
+                        <div className="table-ring critical-ring">
+                          <div className="table-core critical-core">
+                            <span className="core-text danger">HELP</span>
+                          </div>
+                          <div className="critical-border"></div>
+                          <div className="marker marker-critical marker-top"></div>
+                          <div className="marker marker-critical marker-bottom"></div>
+                          <div className="marker marker-critical marker-left"></div>
+                          <div className="marker marker-critical marker-right"></div>
+                        </div>
+                      </div>
+                    )}
 
-                <div className="table-visual">
-                  <div className="table-ring">
-                    <div className="table-core">
-                      <span className="core-text">CORE</span>
+                    {team.type === 'waiting' && (
+                      <div className="simple-visual">
+                        <div className="waiting-indicator">
+                          <span className="material-symbols-outlined">hourglass_empty</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {team.type === 'in-session' && (
+                      <div className="simple-visual">
+                        <div className="in-session-indicator">
+                          <div className="session-inner">
+                            <span className="material-symbols-outlined">record_voice_over</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="card-footer">
+                      <span className={`status-text ${team.status}`}>
+                        <span className={`status-indicator ${team.critical ? 'ping' : ''}`}></span> {team.statusText}
+                      </span>
+                      {team.elapsed && <span className="elapsed-time">Elapsed: {team.elapsed}</span>}
                     </div>
-                    <div className="progress-segment"></div>
-                    <div className="marker marker-progress marker-bottom"></div>
-                    <div className="marker marker-inactive marker-left"></div>
-                  </div>
-                </div>
 
-                <div className="card-footer">
-                  <span className="status-text stable">
-                    <span className="status-indicator"></span> Stable Flow
-                  </span>
-                  <span className="elapsed-time">Elapsed: 15m</span>
-                </div>
-
-                <div className="card-overlay">
-                  <p className="overlay-title">Engineering Sync</p>
-                  <button className="overlay-button">
-                    <span className="material-symbols-outlined">visibility</span> Peek Into Table
-                  </button>
-                </div>
-              </div>
-
-              {/* Team Table Card 3 - Critical */}
-              <div className="team-card critical">
-                <div className="card-header">
-                  <div>
-                    <div className="title-with-warning">
-                      <h4 className="card-title danger">Team Delta</h4>
-                      <span className="material-symbols-outlined warning-icon">warning</span>
-                    </div>
-                    <p className="card-subtitle">Incident Retrospective</p>
-                  </div>
-                  <div className="participant-count danger">
-                    <span className="material-symbols-outlined">person</span>
-                    <span className="count-text">10/10</span>
-                  </div>
-                </div>
-
-                <div className="table-visual">
-                  <div className="table-ring critical-ring">
-                    <div className="table-core critical-core">
-                      <span className="core-text danger">HELP</span>
-                    </div>
-                    <div className="critical-border"></div>
-                    <div className="marker marker-critical marker-top"></div>
-                    <div className="marker marker-critical marker-bottom"></div>
-                    <div className="marker marker-critical marker-left"></div>
-                    <div className="marker marker-critical marker-right"></div>
-                  </div>
-                </div>
-
-                <div className="card-footer">
-                  <span className="status-text critical">
-                    <span className="status-indicator ping"></span> Critical Support
-                  </span>
-                  <span className="elapsed-time">Elapsed: 08m</span>
-                </div>
-
-                <div className="card-overlay critical-overlay">
-                  <p className="overlay-title">Support Required</p>
-                  <button className="overlay-button danger">
-                    <span className="material-symbols-outlined">support_agent</span> Join as Moderator
-                  </button>
-                </div>
-              </div>
-
-              {/* Team Card 4 - Simple */}
-              <div className="team-card">
-                <div className="card-header">
-                  <div>
-                    <h4 className="card-title">Marketing - Gamma</h4>
-                    <p className="card-subtitle">Brand Strategy</p>
-                  </div>
-                  <div className="participant-count">
-                    <span className="material-symbols-outlined">person</span>
-                    <span className="count-text">4/6</span>
-                  </div>
-                </div>
-
-                <div className="simple-visual">
-                  <div className="waiting-indicator">
-                    <span className="material-symbols-outlined">hourglass_empty</span>
-                  </div>
-                </div>
-
-                <div className="card-footer">
-                  <span className="status-text waiting">Waiting for consensus</span>
-                </div>
-
-                <div className="card-overlay">
-                  <button className="overlay-button">
-                    <span className="material-symbols-outlined">visibility</span> Peek
-                  </button>
-                </div>
-              </div>
-
-              {/* Team Card 5 - Simple */}
-              <div className="team-card">
-                <div className="card-header">
-                  <div>
-                    <h4 className="card-title">UX Research</h4>
-                    <p className="card-subtitle">Usability Interviews</p>
-                  </div>
-                  <div className="participant-count">
-                    <span className="material-symbols-outlined">person</span>
-                    <span className="count-text">2/2</span>
-                  </div>
-                </div>
-
-                <div className="simple-visual">
-                  <div className="in-session-indicator">
-                    <div className="session-inner">
-                      <span className="material-symbols-outlined">record_voice_over</span>
+                    <div className={`card-overlay ${team.critical ? 'critical-overlay' : ''}`}>
+                      <p className="overlay-title">{team.overlayTitle}</p>
+                      <button 
+                        className={`overlay-button ${team.critical ? 'danger' : ''}`}
+                        onClick={() => team.critical ? handleJoinAsModerator(team.name) : handlePeekIntoTable(team.name)}
+                      >
+                        <span className="material-symbols-outlined">
+                          {team.critical ? 'support_agent' : 'visibility'}
+                        </span>
+                        {team.critical ? 'Join as Moderator' : 'Peek Into Table'}
+                      </button>
                     </div>
                   </div>
-                </div>
+                ))
+              )}
 
-                <div className="card-footer">
-                  <span className="status-text in-session">In Session</span>
+              {/* Add Table Placeholder - only show when not searching */}
+              {searchQuery === '' && (
+                <div className="add-table-card" onClick={handleStartNewSession}>
+                  <div className="add-icon">
+                    <span className="material-symbols-outlined">add</span>
+                  </div>
+                  <div className="add-text">
+                    <p className="add-title">Start New Session</p>
+                    <p className="add-subtitle">Manual Override</p>
+                  </div>
                 </div>
-
-                <div className="card-overlay">
-                  <button className="overlay-button">
-                    <span className="material-symbols-outlined">visibility</span> Peek
-                  </button>
-                </div>
-              </div>
-
-              {/* Add Table Placeholder */}
-              <div className="add-table-card">
-                <div className="add-icon">
-                  <span className="material-symbols-outlined">add</span>
-                </div>
-                <div className="add-text">
-                  <p className="add-title">Start New Session</p>
-                  <p className="add-subtitle">Manual Override</p>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </main>
